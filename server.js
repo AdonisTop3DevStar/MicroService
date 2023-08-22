@@ -19,6 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // simple route
 require("./app/routes/customer.routes")(app);
+require("./app/routes/product.routes")(app);
+require("./app/routes/price.routes")(app);
+require("./app/routes/subscription.routes")(app);
+require("./app/routes/report.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

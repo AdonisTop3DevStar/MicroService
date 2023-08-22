@@ -6,12 +6,10 @@ exports.createCustomer = async (req, res) => {
     try {
         const { name, email, phone, creditCardToken } = req.body;
 
-
         if (!name || !email || !phone) {
             return res.status(400).json({ message: 'Invalid input fields' });
         }
 
-        // Validate credit card using Stripe
         if (!creditCardToken) {
             return res.status(400).json({ message: 'Invalid credit card token' });
         }
@@ -43,7 +41,6 @@ exports.createCustomer = async (req, res) => {
 
 exports.retrieveCustomer = async (req, res) => {
     try {
-
         const customerId = req.params.id;
 
         const customer = await stripe.customers.retrieve(customerId);
@@ -90,7 +87,6 @@ exports.deleteCustomer = async (req, res) => {
 
 exports.allCustomer = async (req, res) => {
     try {
-
         const customers = await stripe.customers.list();
 
         res.status(200).json({ status: true, message: "List all Customers!", data: customers });
@@ -104,17 +100,18 @@ exports.searchCustomer = async (req, res) => {
     try {
         const { limit, page, created, email, metadata, name, phone } = req.body;
 
-        const customer = await stripe.customers.search({
-            query: "",
-            name : name,
-            email : email,
-            phone : phone,
-            created : created,
-            metadata : metadata,
-            limit : limit,
-            page : page
+        const customers = await stripe.customers.search({
+            limit: limit,
+            starting_after: page,
+            email: email,
+            metadata: metadata,
+            name: name,
+            phone: phone,
+            created: created
         });
-    } catch {
+
+        res.status(200).json({ status: true, message: "List all Customers!", data: customers });
+    } catch (err) {
         console.log("stripe error : ", err);
         res.status(500).json({ status: false, message: "An error occurred!", err: err.message });
     }
